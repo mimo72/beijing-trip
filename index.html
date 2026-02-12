@@ -287,10 +287,10 @@ const A={
  sp(c){return this.ex.filter(e=>e.c===c).reduce((s,e)=>s+e.a,0)},
  // deep links
  nav(n,la,lo){
-  const w=`https://uri.amap.com/navigation?to=${lo},${la},${encodeURIComponent(n)}&mode=bus&coordinate=gaode`;
-  const a=`iosamap://path?sourceApplication=bjtrip&dlat=${la}&dlon=${lo}&dname=${encodeURIComponent(n)}&dev=0&t=0`;
-  const t0=Date.now(),f=document.createElement('iframe');f.style.display='none';f.src=a;document.body.appendChild(f);
-  setTimeout(()=>{document.body.removeChild(f);if(!document.hidden&&Date.now()-t0<2000)window.location.href=w},1200);
+  const app=`iosamap://path?sourceApplication=bjtrip&dlat=${la}&dlon=${lo}&dname=${encodeURIComponent(n)}&dev=0&t=0`;
+  const web=`https://uri.amap.com/navigation?to=${lo},${la},${encodeURIComponent(n)}&mode=bus&coordinate=gaode`;
+  window.location.href=app;
+  setTimeout(()=>{if(!document.hidden)window.location.href=web},1500);
  },
  dp(q){window.open('https://m.dianping.com/search/keyword/2/0_'+encodeURIComponent(q),'_blank')},
  url(u){window.open(u,'_blank')},
@@ -363,9 +363,8 @@ const A={
    it.ac.forEach(a=>{
     const c=a.p==='nav'?'an':a.p==='dp'?'af':a.p==='url'||a.p==='wx'?'ak':'ac';
     const ic=a.p==='nav'?'🧭':a.p==='dp'?'🔍':a.p==='url'?'🔗':a.p==='wx'?'💬':'📋';
-    if(a.p==='nav'){const hr=`https://uri.amap.com/navigation?to=${a.lo},${a.la},${encodeURIComponent(a.n)}&mode=bus&coordinate=gaode`;acH+=`<a class="ab ${c}" href="${hr}" target="_blank">${ic} ${a.l}</a>`}
-    else if(a.p==='dp'){acH+=`<a class="ab ${c}" href="https://m.dianping.com/search/keyword/2/0_${encodeURIComponent(a.q)}" target="_blank">${ic} ${a.l}</a>`}
-    else if(a.p==='url'){acH+=`<a class="ab ${c}" href="${a.url}" target="_blank">${ic} ${a.l}</a>`}
+    if(a.p==='dp'){acH+=`<a class="ab ${c}" href="https://m.dianping.com/search/keyword/2/0_${encodeURIComponent(a.q)}">${ic} ${a.l}</a>`}
+    else if(a.p==='url'){acH+=`<a class="ab ${c}" href="${a.url}">${ic} ${a.l}</a>`}
     else{acH+=`<button class="ab ${c}" onclick="A.act(JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(a))}')))">${ic} ${a.l}</button>`}
    });
    acH+='</div>';
@@ -403,7 +402,7 @@ const A={
    <div class="ir"><div><div class="il">酒店</div><div class="iv">${ht.n}</div></div></div>
    <div class="ir"><div><div class="il">地址</div><div class="iv" style="font-size:13px">${ht.ad}</div></div></div>
    <div class="ir"><div><div class="il">地铁</div><div class="iv" style="font-size:13px">${ht.mt}</div></div></div>
-   <div class="as" style="margin-top:6px"><a class="ab an" href="https://uri.amap.com/navigation?to=${ht.lo},${ht.la},${encodeURIComponent(ht.n)}&mode=bus&coordinate=gaode" target="_blank">🧭 导航到酒店</a></div></div>`;
+   <div class="as" style="margin-top:6px"><button class="ab an" onclick="A.nav(D.ht.n,D.ht.la,D.ht.lo)">🧭 导航到酒店</button></div></div>`;
   h+=`<div class="sc">停车信息</div><div class="ic2"><div class="iv">${D.pk.n}</div><div class="cm">${D.pk.nt} · ${D.pk.ct}</div></div>`;
 
   const ts=this.ex.reduce((s,e)=>s+e.a,0);
