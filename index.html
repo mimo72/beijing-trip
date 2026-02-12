@@ -12,13 +12,13 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{--red:#C62828;--ink:#1A1A2E;--bg:#F8F6F3;--card:#fff;--tx:#333;--tx2:#888;--gold:#D4A853;--grn:#2E7D32;--bdr:#E8E4DF;--shd:0 2px 12px rgba(0,0,0,.08);--hh:56px;--th:60px;--st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px)}
-html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;background:var(--bg);color:var(--tx);overflow:hidden}
-.app{display:flex;flex-direction:column;height:100%;max-width:500px;margin:0 auto}
-.hd{position:fixed;top:0;left:0;right:0;z-index:100;padding-top:var(--st);background:rgba(248,246,243,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);max-width:500px;margin:0 auto}
+html,body{height:100%;height:100dvh;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;background:var(--bg);color:var(--tx);overflow:hidden}
+.app{display:flex;flex-direction:column;height:100%;height:100dvh;max-width:500px;margin:0 auto}
+.hd{position:fixed;top:0;left:0;right:0;z-index:100;padding-top:max(var(--st),8px);background:rgba(248,246,243,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);max-width:500px;margin:0 auto}
 .hd-in{height:var(--hh);display:flex;align-items:center;justify-content:center}.hd-t{font-size:17px;font-weight:700;color:var(--ink);letter-spacing:.5px}
-.ct{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-top:calc(var(--hh)+var(--st)+4px);padding-bottom:calc(var(--th)+var(--sb)+8px)}
+.ct{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-top:calc(var(--hh)+max(var(--st),8px)+4px);padding-bottom:calc(var(--th)+max(var(--sb),16px)+16px)}
 .ci{padding:16px;max-width:500px;margin:0 auto}
-.tb{position:fixed;bottom:0;left:0;right:0;z-index:100;padding-bottom:var(--sb);background:rgba(255,255,255,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--bdr);display:flex;max-width:500px;margin:0 auto}
+.tb{position:fixed;bottom:0;left:0;right:0;z-index:100;padding-bottom:max(var(--sb),8px);background:rgba(255,255,255,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--bdr);display:flex;max-width:500px;margin:0 auto}
 .ti{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;height:var(--th);cursor:pointer;color:var(--tx2);transition:color .2s;position:relative}
 .ti .ic{font-size:21px;margin-bottom:2px}.ti .lb{font-size:10px;font-weight:500}
 .ti.on{color:var(--red)}.ti.on .lb{font-weight:700}
@@ -90,7 +90,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC"
 .nt{font-size:12px;color:var(--tx2);padding:4px 0;line-height:1.5;display:flex;gap:6px}.nt::before{content:'💡';flex-shrink:0;font-size:11px}
 .plb{background:#FFF8E1;border-radius:8px;padding:10px;margin-top:8px;font-size:12px;color:#F57F17;line-height:1.5}.plb::before{content:'🔄 Plan B：';font-weight:700}
 .cv{color:var(--grn);font-size:11px}.cl2{color:#F57F17;font-size:11px}.cu{color:var(--red);font-size:11px;font-style:italic}
-.toast{position:fixed;bottom:calc(var(--th)+var(--sb)+20px);left:50%;transform:translateX(-50%) translateY(60px);background:rgba(0,0,0,.78);color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;z-index:200;opacity:0;pointer-events:none;transition:all .3s}
+.toast{position:fixed;bottom:calc(var(--th)+max(var(--sb),8px)+20px);left:50%;transform:translateX(-50%) translateY(60px);background:rgba(0,0,0,.78);color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;z-index:200;opacity:0;pointer-events:none;transition:all .3s}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .fd{animation:fi .3s ease}@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 </style>
@@ -281,7 +281,7 @@ const A={
  cCnt(p){return Object.keys(this.ck).filter(k=>k.startsWith(p)&&this.ck[k]).length},
  tog(id){this.ck[id]=!this.ck[id];LS.s('ck',this.ck);this.r()},
  toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1500)},
- cp(t){navigator.clipboard?navigator.clipboard.writeText(t).then(()=>this.toast('已复制')):(()=>{const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');document.body.removeChild(a);this.toast('已复制')})()},
+ cp(t){const fb=()=>{const a=document.createElement('textarea');a.value=t;a.style.cssText='position:fixed;left:-9999px;top:0';document.body.appendChild(a);a.focus();a.select();try{document.execCommand('copy');this.toast('已复制')}catch{this.toast('长按复制：'+t)}document.body.removeChild(a)};if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(()=>this.toast('已复制')).catch(fb)}else{fb()}},
  addE(c,a){if(!a||a<=0)return;this.ex.push({c,a:Number(a),d:new Date().toISOString()});LS.s('ex',this.ex);this.r()},
  delE(i){this.ex.splice(i,1);LS.s('ex',this.ex);this.r()},
  sp(c){return this.ex.filter(e=>e.c===c).reduce((s,e)=>s+e.a,0)},
@@ -455,10 +455,7 @@ const A={
 A.r();
 setInterval(()=>{if(A.tab==='today')A.r()},60000);
 
-if('serviceWorker' in navigator){
- const c=`const C='bj1';self.addEventListener('install',e=>{self.skipWaiting()});self.addEventListener('activate',e=>{self.clients.claim()});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{if(res.ok){const c=res.clone();caches.open(C).then(ca=>ca.put(e.request,c))}return res}).catch(()=>new Response('离线模式'))))});`;
- navigator.serviceWorker.register(URL.createObjectURL(new Blob([c],{type:'application/javascript'}))).catch(()=>{});
-}
+// Service Worker removed: Blob URL registration not supported on iOS Safari
 </script>
 </body>
 </html>
