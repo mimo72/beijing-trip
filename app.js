@@ -38,9 +38,16 @@ const App = {
   /** 切换底部 Tab */
   go(tab) {
     this.tab = tab;
+    const tabs = ['today', 'trip', 'list', 'me'];
+    const idx = tabs.indexOf(tab);
     document.querySelectorAll('.ti').forEach(el =>
       el.classList.toggle('on', el.dataset.tab === tab)
     );
+    // Position sliding pill indicator
+    const pill = document.getElementById('tabPill');
+    if (pill && idx >= 0) {
+      pill.style.transform = `translateX(${idx * 100}%)`;
+    }
     this.render();
     this.rootEl.scrollTop = 0;
   },
@@ -315,19 +322,30 @@ const App = {
     const urgent = prep.filter(x => !this.checked[x.id] && x.dl && x.dl <= todayFormatted);
     const upcoming = prep.filter(x => !this.checked[x.id] && (!x.dl || x.dl > todayFormatted)).slice(0, 5);
 
-    const ringR = 40, ringC = 2 * Math.PI * ringR;
+    // Compact horizontal countdown card
+    const ringR = 28, ringC = 2 * Math.PI * ringR;
     const ringOffset = ringC - (ringC * percent / 100);
-    let html = `<div class="cnt"><div class="n">${daysLeft}</div><div class="lb2">天后出发</div>` +
-      `<div class="cnt-ring"><svg width="100" height="100" viewBox="0 0 100 100">` +
-      `<circle cx="50" cy="50" r="${ringR}" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="6"/>` +
-      `<circle cx="50" cy="50" r="${ringR}" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" ` +
-      `stroke-dasharray="${ringC}" stroke-dashoffset="${ringOffset}" style="transition:stroke-dashoffset .8s ease"/>` +
-      `</svg><div class="cnt-ring-label">${done}/${total}</div></div>` +
-      `<div style="font-size:12px;opacity:.8;margin-top:8px">准备进度 ${percent}%</div></div>`;
+    let html = `<div class="cnt cnt-compact">` +
+      `<div class="cnt-left"><div class="n">${daysLeft}</div><div class="lb2">天后出发</div></div>` +
+      `<div class="cnt-right">` +
+      `<svg width="70" height="70" viewBox="0 0 70 70">` +
+      `<circle cx="35" cy="35" r="${ringR}" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="5"/>` +
+      `<circle cx="35" cy="35" r="${ringR}" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" ` +
+      `stroke-dasharray="${ringC}" stroke-dashoffset="${ringOffset}" style="transition:stroke-dashoffset .8s ease;transform:rotate(-90deg);transform-origin:35px 35px"/>` +
+      `</svg>` +
+      `<div class="cnt-ring-over">${percent}%</div>` +
+      `</div></div>`;
 
-    // 天气小组件
-    html += this.renderWeatherWidget();
+    // Quick-glance row: next event + weather today + progress
+    const todayWeather = tripData.days[0];
+    const nextItem = urgent.length ? urgent[0] : (upcoming.length ? upcoming[0] : null);
+    html += `<div class="qg-row">`;
+    html += `<div class="qg-item"><div class="qg-ic">\uD83C\uDF21</div><div class="qg-val">${this.getWeatherTemp(todayWeather.wx)}</div><div class="qg-lbl">Day1天气</div></div>`;
+    html += `<div class="qg-item"><div class="qg-ic">\uD83D\uDCCB</div><div class="qg-val">${done}/${total}</div><div class="qg-lbl">准备进度</div></div>`;
+    html += `<div class="qg-item"><div class="qg-ic">\u2708\uFE0F</div><div class="qg-val">${tripData.flights.outbound.depart}</div><div class="qg-lbl">出发航班</div></div>`;
+    html += `</div>`;
 
+    // Urgent items first (actionable content prioritized)
     if (urgent.length) {
       html += `<div class="sc" style="color:var(--red)">今日必做</div>`;
       urgent.forEach(x => { html += this.renderCheckItem(x, 1); });
@@ -337,8 +355,11 @@ const App = {
       upcoming.forEach(x => { html += this.renderCheckItem(x); });
     }
 
-    html += `<div style="margin-top:16px;text-align:center">` +
-      `<a href="${tripData.links.weather}" target="_blank" style="color:var(--tx2);font-size:12px;text-decoration:none;padding:6px 12px;background:var(--card);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06)">` +
+    // Compact weather (inline row instead of horizontal scroll)
+    html += this.renderWeatherWidgetCompact();
+
+    html += `<div style="margin-top:12px;text-align:center">` +
+      `<a href="${tripData.links.weather}" target="_blank" style="color:var(--tx2);font-size:12px;text-decoration:none;padding:5px 10px;background:var(--card);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06)">` +
       `\uD83C\uDF24 查看北京天气</a></div>`;
     return html;
   },
@@ -355,6 +376,21 @@ const App = {
         `<div class="wx-icon">${this.getWeatherIcon(day.wx)}</div>` +
         `<div class="wx-temp">${this.getWeatherTemp(day.wx)}</div>` +
         `<div class="wx-tip">${this.getWeatherTip(day.wx)}</div></div>`;
+    });
+    html += `</div>`;
+    return html;
+  },
+
+  /** 天气小组件（紧凑版，用于倒计时页面） */
+  renderWeatherWidgetCompact() {
+    let html = `<div class="sc">行程天气</div><div class="wx-compact">`;
+    tripData.days.forEach(day => {
+      const dateLabel = parseInt(day.d.slice(5, 7)) + '/' + parseInt(day.d.slice(8, 10));
+      html += `<div class="wx-mini">` +
+        `<div class="wx-mini-day">Day${day.i}</div>` +
+        `<div class="wx-mini-ic">${this.getWeatherIcon(day.wx)}</div>` +
+        `<div class="wx-mini-temp">${this.getWeatherTemp(day.wx)}</div>` +
+        `</div>`;
     });
     html += `</div>`;
     return html;

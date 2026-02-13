@@ -14,14 +14,16 @@
 <link rel="stylesheet" href="features.css">
 </head>
 <body>
+<svg style="position:absolute;width:0;height:0" aria-hidden="true"><defs><linearGradient id="tabIconGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#C62828"/><stop offset="100%" stop-color="#D4A853"/></linearGradient></defs></svg>
 <div class="app">
 <header class="hd"><div class="hd-in"><div class="hd-t">北京之旅 · 大年初四至初八</div></div></header>
 <main class="ct" id="root"></main>
 <nav class="tb">
-<div class="ti on" data-tab="today" onclick="App.go('today')"><span class="ic">📍</span><span class="lb" data-text="今日">今日</span></div>
-<div class="ti" data-tab="trip" onclick="App.go('trip')"><span class="ic">📅</span><span class="lb" data-text="行程">行程</span></div>
-<div class="ti" data-tab="list" onclick="App.go('list')"><span class="ic">✅</span><span class="lb" data-text="清单">清单</span></div>
-<div class="ti" data-tab="me" onclick="App.go('me')"><span class="ic">👤</span><span class="lb" data-text="我的">我的</span></div>
+<div class="tb-pill" id="tabPill"></div>
+<div class="ti on" data-tab="today" onclick="App.go('today')"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></span><span class="lb" data-text="今日">今日</span></div>
+<div class="ti" data-tab="trip" onclick="App.go('trip')"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg></span><span class="lb" data-text="行程">行程</span></div>
+<div class="ti" data-tab="list" onclick="App.go('list')"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span><span class="lb" data-text="清单">清单</span></div>
+<div class="ti" data-tab="me" onclick="App.go('me')"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span class="lb" data-text="我的">我的</span></div>
 </nav>
 <div class="toast" id="toast"></div>
 </div>

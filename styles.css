@@ -172,12 +172,12 @@ html, body {
 }
 
 .ci {
-  padding: 16px;
+  padding: 12px 14px;
   max-width: 500px;
   margin: 0 auto;
 }
 
-/* ---- Tab Bar 底部导航 (Glassmorphism) ---- */
+/* ---- Tab Bar 底部导航 (Glassmorphism + Pill Indicator) ---- */
 .tb {
   flex-shrink: 0;
   z-index: 10;
@@ -185,9 +185,45 @@ html, body {
   background: var(--card-glass);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
-  border-top: 1px solid var(--bdr);
+  border-top: none;
   display: flex;
   transition: background-color .3s, border-color .3s;
+  position: relative;
+  height: calc(var(--th) + 4px);
+}
+/* Gradient border-top accent line */
+.tb::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent 5%, var(--bdr) 20%, var(--red-glow) 50%, var(--bdr) 80%, transparent 95%);
+}
+
+/* Sliding pill indicator */
+.tb-pill {
+  position: absolute;
+  top: 8px;
+  left: 0;
+  width: 25%;
+  height: calc(100% - var(--sb) - 14px);
+  pointer-events: none;
+  z-index: 0;
+  transition: transform .35s var(--ease-spring);
+}
+.tb-pill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 52px;
+  height: 100%;
+  border-radius: 14px;
+  background: var(--red-glow);
+  box-shadow: 0 0 12px 2px rgba(198, 40, 40, .08);
 }
 
 .ti {
@@ -199,12 +235,27 @@ html, body {
   height: var(--th);
   cursor: pointer;
   color: var(--tx2);
-  transition: color .2s, transform .15s var(--ease-spring);
+  transition: color .25s var(--ease-smooth), transform .2s var(--ease-spring);
   position: relative;
+  z-index: 1;
 }
 .ti:active { transform: scale(.92); }
 
-.ti .ic { font-size: 21px; margin-bottom: 2px; }
+/* SVG icon sizing */
+.ti .ic {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .25s var(--ease-spring);
+}
+.ti .ic svg {
+  width: 22px;
+  height: 22px;
+  transition: stroke-width .25s, filter .25s;
+}
 .ti .lb {
   font-size: 10px;
   font-weight: 500;
@@ -223,26 +274,19 @@ html, body {
   pointer-events: none;
 }
 
-/* 选中态 - with glow dot */
-.ti.on { color: var(--red); }
+/* Active tab state - gradient icon + lift */
+.ti.on {
+  color: var(--red);
+}
+.ti.on .ic {
+  transform: translateY(-2px);
+}
+.ti.on .ic svg {
+  stroke: url(#tabIconGradient);
+  stroke-width: 2;
+  filter: drop-shadow(0 1px 3px rgba(198, 40, 40, .25));
+}
 .ti.on .lb { font-weight: 700; }
-.ti.on::after {
-  content: '';
-  position: absolute;
-  top: 2px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--red);
-  box-shadow: 0 0 6px 2px var(--red-glow);
-  animation: dotGlow 2s ease-in-out infinite;
-}
-@keyframes dotGlow {
-  0%, 100% { box-shadow: 0 0 6px 2px var(--red-glow); }
-  50%      { box-shadow: 0 0 10px 4px var(--red-glow); }
-}
 
 /* Ripple effect on tab items */
 .ti::before {
@@ -266,8 +310,8 @@ html, body {
 .dt {
   display: flex;
   overflow-x: auto;
-  gap: 8px;
-  padding: 4px 16px 12px;
+  gap: 6px;
+  padding: 2px 14px 10px;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
 }
@@ -311,9 +355,9 @@ html, body {
 /* ---- Card 通用卡片 (Multi-layer Shadow) ---- */
 .cd {
   background: var(--card);
-  border-radius: 14px;
-  padding: 14px;
-  margin-bottom: 12px;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
   box-shadow: var(--shd);
   border: 1px solid rgba(0, 0, 0, .03);
   cursor: pointer;
@@ -554,11 +598,11 @@ html, body {
 /* ---- Countdown 倒计时卡片 (Upgraded with animated background) ---- */
 .cnt {
   text-align: center;
-  padding: 32px 20px 28px;
+  padding: 24px 20px 20px;
   background: linear-gradient(135deg, #B71C1C 0%, var(--red) 40%, #EF5350 100%);
-  border-radius: 20px;
+  border-radius: 16px;
   color: #fff;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   position: relative;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(198, 40, 40, .3), 0 8px 40px rgba(198, 40, 40, .15);
@@ -613,7 +657,79 @@ html, body {
   50%      { transform: scale(1.03); }
 }
 
-/* Ring Progress Chart */
+/* Compact horizontal countdown layout */
+.cnt-compact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  text-align: left;
+}
+.cnt-compact .cnt-left {
+  flex: 1;
+}
+.cnt-compact .n {
+  font-size: 52px;
+  animation: none;
+}
+.cnt-compact .lb2 {
+  margin-top: 2px;
+}
+.cnt-compact .cnt-right {
+  flex-shrink: 0;
+  position: relative;
+  width: 70px;
+  height: 70px;
+}
+.cnt-ring-over {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+}
+
+/* Quick-glance row */
+.qg-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.qg-item {
+  flex: 1;
+  background: var(--card);
+  border-radius: 10px;
+  padding: 10px 6px;
+  text-align: center;
+  box-shadow: var(--shd);
+  border: 1px solid rgba(0,0,0,.03);
+}
+.qg-ic { font-size: 16px; margin-bottom: 2px; }
+.qg-val { font-size: 15px; font-weight: 800; color: var(--ink); }
+.qg-lbl { font-size: 10px; color: var(--tx2); margin-top: 1px; }
+
+/* Compact weather mini-row */
+.wx-compact {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.wx-mini {
+  flex: 1;
+  background: var(--card);
+  border-radius: 8px;
+  padding: 8px 4px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,.04);
+  border: 1px solid rgba(0,0,0,.03);
+}
+.wx-mini-day { font-size: 10px; font-weight: 600; color: var(--tx2); }
+.wx-mini-ic { font-size: 18px; margin: 2px 0; }
+.wx-mini-temp { font-size: 11px; font-weight: 700; color: var(--ink); }
+
+/* Ring Progress Chart (legacy, kept for trip timeline usage) */
 .cnt-ring {
   display: flex;
   justify-content: center;
@@ -643,14 +759,14 @@ html, body {
 .ck {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
+  gap: 10px;
+  padding: 10px 12px;
   background: var(--card);
-  border-radius: 12px;
-  margin-bottom: 6px;
+  border-radius: 10px;
+  margin-bottom: 5px;
   cursor: pointer;
   border: 1px solid rgba(0, 0, 0, .03);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, .04);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .03);
   transition: transform .15s var(--ease-spring), box-shadow .2s, background-color .3s;
 }
 .ck:active { transform: scale(.975); }
@@ -713,10 +829,10 @@ html, body {
 
 /* ---- Section Heading 区块标题 ---- */
 .sc {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--ink);
-  margin: 20px 0 10px;
+  margin: 14px 0 8px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -782,9 +898,9 @@ html, body {
 .fc {
   background: linear-gradient(135deg, #1A1A2E 0%, #2D2D4E 60%, #3D3D6E 100%);
   color: #fff;
-  border-radius: 14px;
-  padding: 16px;
-  margin-bottom: 12px;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 8px;
   box-shadow: 0 4px 16px rgba(26, 26, 46, .3), 0 8px 32px rgba(26, 26, 46, .15);
   position: relative;
   overflow: hidden;
@@ -824,9 +940,9 @@ html, body {
 /* ---- Info Card 信息卡片 ---- */
 .ic2 {
   background: var(--card);
-  border-radius: 14px;
-  padding: 14px;
-  margin-bottom: 12px;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
   box-shadow: var(--shd);
   transition: background-color .3s, box-shadow .3s;
 }
