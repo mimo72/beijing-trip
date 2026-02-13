@@ -1,0 +1,439 @@
+/* =============================================
+   features.css - 新功能样式
+   ============================================= */
+
+/* ---- Weather Widget 天气小组件 ---- */
+.wx-scroll {
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  padding: 4px 0 8px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.wx-scroll::-webkit-scrollbar { display: none; }
+
+.wx-card {
+  flex-shrink: 0;
+  width: 110px;
+  background: var(--card);
+  border-radius: 12px;
+  padding: 12px 10px;
+  text-align: center;
+  box-shadow: var(--shd);
+  border: 1px solid rgba(0,0,0,.03);
+}
+.wx-card.wx-today {
+  background: linear-gradient(135deg, #1565C0, #1976D2);
+  color: #fff;
+  border: none;
+}
+.wx-card .wx-date {
+  font-size: 11px;
+  font-weight: 600;
+  opacity: .7;
+  margin-bottom: 4px;
+}
+.wx-card.wx-today .wx-date { opacity: .9; }
+.wx-card .wx-icon {
+  font-size: 28px;
+  margin: 4px 0;
+}
+.wx-card .wx-temp {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 4px 0;
+}
+.wx-card .wx-tip {
+  font-size: 10px;
+  opacity: .65;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ---- Budget Ring Chart 环形进度图 ---- */
+.budget-ring-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 14px;
+}
+.budget-ring {
+  position: relative;
+  width: 110px;
+  height: 110px;
+}
+.budget-ring svg {
+  transform: rotate(-90deg);
+}
+.budget-ring-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+.budget-ring-label .ring-amount {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--ink);
+}
+.budget-ring-label .ring-sub {
+  font-size: 10px;
+  color: var(--tx2);
+  margin-top: 2px;
+}
+
+/* ---- Budget Bar Chart 柱状图 ---- */
+.budget-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 100px;
+  padding: 0 4px;
+  margin-bottom: 10px;
+}
+.budget-bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.budget-bar-group {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  width: 100%;
+  justify-content: center;
+  flex: 1;
+}
+.budget-bar-item {
+  width: 14px;
+  border-radius: 3px 3px 0 0;
+  min-height: 2px;
+  transition: height .3s;
+}
+.budget-bar-item.bar-budget {
+  background: #E0E0E0;
+}
+.budget-bar-item.bar-spent {
+  background: var(--red);
+}
+.budget-bar-label {
+  font-size: 10px;
+  color: var(--tx2);
+  text-align: center;
+  white-space: nowrap;
+}
+.budget-bar-val {
+  font-size: 9px;
+  color: var(--tx2);
+  text-align: center;
+}
+.budget-legend {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+.budget-legend span {
+  font-size: 10px;
+  color: var(--tx2);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.budget-legend .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+/* ---- Expense Edit Modal 花费编辑弹窗 ---- */
+.exp-modal-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn .2s;
+}
+.exp-modal {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 20px;
+  width: 88%;
+  max-width: 360px;
+  box-shadow: 0 8px 30px rgba(0,0,0,.2);
+}
+.exp-modal h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+.exp-modal label {
+  font-size: 12px;
+  color: var(--tx2);
+  display: block;
+  margin-bottom: 4px;
+}
+.exp-modal select,
+.exp-modal input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1.5px solid var(--bdr);
+  border-radius: 8px;
+  font-size: 14px;
+  background: var(--bg);
+  margin-bottom: 10px;
+  -webkit-appearance: none;
+}
+.exp-modal-btns {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+.exp-modal-btns button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.exp-modal-btns .btn-save {
+  background: var(--red);
+  color: #fff;
+}
+.exp-modal-btns .btn-cancel {
+  background: #ECEFF1;
+  color: var(--tx);
+}
+
+/* ---- Expense Group by Date ---- */
+.exp-date-group {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--tx2);
+  padding: 10px 0 4px;
+  border-bottom: 1px solid var(--bdr);
+  margin: 6px 0;
+}
+
+/* ---- Diary 日记功能 ---- */
+.diary-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 10px;
+  box-shadow: var(--shd);
+  border: 1px solid rgba(0,0,0,.03);
+}
+.diary-card-hd {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+.diary-day-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.diary-day-num {
+  background: var(--red);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+.diary-day-date {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.diary-day-theme {
+  font-size: 11px;
+  color: var(--tx2);
+  margin-top: 2px;
+}
+.diary-toggle {
+  font-size: 12px;
+  color: var(--tx2);
+  transition: transform .25s;
+}
+.diary-card.open .diary-toggle {
+  transform: rotate(180deg);
+}
+.diary-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .35s ease;
+}
+.diary-card.open .diary-body {
+  max-height: 600px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--bdr);
+}
+.diary-text {
+  width: 100%;
+  min-height: 100px;
+  border: 1.5px solid var(--bdr);
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 13px;
+  font-family: inherit;
+  background: var(--bg);
+  color: var(--tx);
+  resize: vertical;
+  line-height: 1.6;
+}
+.diary-text:focus {
+  outline: none;
+  border-color: var(--red);
+}
+.diary-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  justify-content: flex-end;
+}
+.diary-actions button {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.diary-btn-save {
+  background: var(--red);
+  color: #fff;
+}
+.diary-btn-del {
+  background: #ECEFF1;
+  color: #666;
+}
+.diary-preview {
+  font-size: 12px;
+  color: var(--tx2);
+  margin-top: 6px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.diary-empty {
+  font-size: 12px;
+  color: var(--tx2);
+  font-style: italic;
+  margin-top: 6px;
+}
+
+/* ---- Checklist Enhancements 清单增强 ---- */
+.ck-cat-hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 10px 0 4px;
+  border-bottom: 1px solid var(--bdr);
+  margin: 10px 0 6px;
+  user-select: none;
+}
+.ck-cat-hd .ck-cat-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gold);
+}
+.ck-cat-hd .ck-cat-prog {
+  font-size: 11px;
+  color: var(--tx2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ck-cat-arrow {
+  transition: transform .25s;
+  font-size: 10px;
+  color: var(--tx2);
+}
+.ck-cat-hd.collapsed .ck-cat-arrow {
+  transform: rotate(-90deg);
+}
+
+.ck-add-wrap {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  margin-bottom: 6px;
+}
+.ck-add-wrap input {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1.5px solid var(--bdr);
+  border-radius: 8px;
+  font-size: 13px;
+  background: var(--bg);
+}
+.ck-add-wrap input:focus {
+  outline: none;
+  border-color: var(--red);
+}
+.ck-add-wrap button {
+  padding: 8px 14px;
+  background: var(--red);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* ---- Trip Overview Stats 行程统计 ---- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.stat-item {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 12px 8px;
+  text-align: center;
+  box-shadow: var(--shd);
+  border: 1px solid rgba(0,0,0,.03);
+}
+.stat-num {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--red);
+}
+.stat-label {
+  font-size: 10px;
+  color: var(--tx2);
+  margin-top: 2px;
+}
+.stat-icon {
+  font-size: 18px;
+  margin-bottom: 2px;
+}
