@@ -22,11 +22,16 @@
   text-align: center;
   box-shadow: var(--shd);
   border: 1px solid rgba(0,0,0,.03);
+  transition: transform .2s var(--ease-spring), box-shadow .2s;
+}
+.wx-card:active {
+  transform: scale(.96);
 }
 .wx-card.wx-today {
-  background: linear-gradient(135deg, #1565C0, #1976D2);
+  background: linear-gradient(135deg, #1565C0, #1976D2, #42A5F5);
   color: #fff;
   border: none;
+  box-shadow: 0 2px 12px rgba(21,101,192,.3), var(--shd);
 }
 .wx-card .wx-date {
   font-size: 11px;
@@ -119,10 +124,11 @@
   transition: height .3s;
 }
 .budget-bar-item.bar-budget {
-  background: #E0E0E0;
+  background: linear-gradient(to top, #E0E0E0, #EEEEEE);
 }
 .budget-bar-item.bar-spent {
-  background: var(--red);
+  background: linear-gradient(to top, #B71C1C, var(--red), #EF5350);
+  box-shadow: 0 -2px 6px rgba(198,40,40,.2);
 }
 .budget-bar-label {
   font-size: 10px;
@@ -215,8 +221,9 @@
   cursor: pointer;
 }
 .exp-modal-btns .btn-save {
-  background: var(--red);
+  background: linear-gradient(135deg, var(--red), #E53935);
   color: #fff;
+  box-shadow: 0 2px 8px rgba(198,40,40,.25);
 }
 .exp-modal-btns .btn-cancel {
   background: #ECEFF1;
@@ -285,7 +292,7 @@
 }
 .ck-add-wrap button {
   padding: 8px 14px;
-  background: var(--red);
+  background: linear-gradient(135deg, var(--red), #E53935);
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -293,6 +300,12 @@
   font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(198,40,40,.2);
+  transition: transform .15s var(--ease-spring), box-shadow .2s;
+}
+.ck-add-wrap button:active {
+  transform: scale(.92);
+  box-shadow: 0 1px 4px rgba(198,40,40,.15);
 }
 
 /* ---- Trip Overview Stats 行程统计 ---- */
@@ -309,11 +322,18 @@
   text-align: center;
   box-shadow: var(--shd);
   border: 1px solid rgba(0,0,0,.03);
+  transition: transform .2s var(--ease-spring), box-shadow .2s;
+}
+.stat-item:active {
+  transform: scale(.95);
 }
 .stat-num {
   font-size: 22px;
   font-weight: 800;
-  color: var(--red);
+  background: linear-gradient(135deg, var(--red), #EF5350);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 .stat-label {
   font-size: 10px;
@@ -323,4 +343,139 @@
 .stat-icon {
   font-size: 18px;
   margin-bottom: 2px;
+}
+
+/* =============================================
+   Visual Polish Enhancements
+   ============================================= */
+
+/* ---- Subtle noise texture on content area for depth ---- */
+.ct {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='.025'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 128px 128px;
+}
+:root[data-theme="dark"] .ct {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .ct {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+  }
+}
+
+/* ---- Decorative Chinese-inspired section dividers ---- */
+.sc::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  margin-left: 8px;
+  background: linear-gradient(90deg, var(--bdr), transparent);
+}
+
+/* ---- Decorative dots pattern on countdown card ---- */
+.cnt {
+  background-image:
+    radial-gradient(circle at 10% 85%, rgba(255,255,255,.06) 1px, transparent 1px),
+    radial-gradient(circle at 90% 15%, rgba(255,255,255,.06) 1px, transparent 1px),
+    radial-gradient(circle at 75% 80%, rgba(255,255,255,.04) 1px, transparent 1px),
+    radial-gradient(circle at 25% 20%, rgba(255,255,255,.04) 1px, transparent 1px),
+    linear-gradient(135deg, #B71C1C 0%, var(--red) 40%, #EF5350 100%);
+  background-size: 20px 20px, 20px 20px, 15px 15px, 15px 15px, 100% 100%;
+}
+
+/* ---- Colored shadows matching card context ---- */
+/* Current timeline item: green-tinted shadow */
+.tl.cur .cd {
+  box-shadow: 0 2px 8px rgba(46,125,50,.12), 0 8px 24px rgba(46,125,50,.08);
+}
+
+/* Flight card: deep navy shadow */
+.fc {
+  box-shadow: 0 4px 16px rgba(26, 26, 46, .35), 0 8px 32px rgba(45, 45, 78, .2);
+}
+
+/* Countdown card: red-tinted layered shadow */
+.cnt {
+  box-shadow:
+    0 4px 20px rgba(198, 40, 40, .3),
+    0 8px 40px rgba(198, 40, 40, .15),
+    inset 0 1px 0 rgba(255,255,255,.1);
+}
+
+/* Active day tab: red glow shadow */
+.dtb.on {
+  box-shadow: 0 2px 12px rgba(198, 40, 40, .35), 0 4px 20px rgba(198, 40, 40, .15);
+}
+
+/* ---- Subtle gradient on progress bars ---- */
+.pb {
+  background: rgba(255, 255, 255, .2);
+}
+.pf {
+  background: linear-gradient(90deg, rgba(255,255,255,.85), #fff);
+}
+
+/* ---- Enhanced checklist checkbox with gradient when checked ---- */
+.ck.dn .cx {
+  background: linear-gradient(135deg, #2E7D32, #43A047);
+  border-color: #2E7D32;
+  box-shadow: 0 1px 4px rgba(46,125,50,.25);
+}
+
+/* ---- Spring Festival themed decorative touch on Plan B card ---- */
+.plb {
+  position: relative;
+  border-left: 3px solid #F57F17;
+}
+
+/* ---- Hover/touch glow on info cards ---- */
+.ic2 {
+  transition: background-color .3s, box-shadow .3s, transform .15s var(--ease-spring);
+}
+.ic2:active {
+  transform: scale(.98);
+}
+
+/* ---- Weather card entrance stagger animation ---- */
+.wx-card {
+  opacity: 0;
+  animation: wxCardIn .4s var(--ease-spring) forwards;
+}
+.wx-card:nth-child(1) { animation-delay: 0ms; }
+.wx-card:nth-child(2) { animation-delay: 60ms; }
+.wx-card:nth-child(3) { animation-delay: 120ms; }
+.wx-card:nth-child(4) { animation-delay: 180ms; }
+.wx-card:nth-child(5) { animation-delay: 240ms; }
+
+@keyframes wxCardIn {
+  0%   { opacity: 0; transform: translateY(10px) scale(.95); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ---- Checklist items entrance animation ---- */
+.ck {
+  animation: ckIn .35s var(--ease-smooth) backwards;
+}
+.ck:nth-child(1) { animation-delay: 0ms; }
+.ck:nth-child(2) { animation-delay: 30ms; }
+.ck:nth-child(3) { animation-delay: 60ms; }
+.ck:nth-child(4) { animation-delay: 90ms; }
+.ck:nth-child(5) { animation-delay: 120ms; }
+.ck:nth-child(6) { animation-delay: 150ms; }
+.ck:nth-child(7) { animation-delay: 180ms; }
+.ck:nth-child(8) { animation-delay: 210ms; }
+
+@keyframes ckIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ---- Respect reduced motion preference ---- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

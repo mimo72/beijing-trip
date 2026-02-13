@@ -417,15 +417,23 @@ const App = {
 
     let html = `<div class="dt" id="dTabs">`;
     tripData.days.forEach((d, i) => {
-      html += `<div class="dtb ${i === this.dayIndex ? 'on' : ''}" onclick="App.selectDay(${i})">Day${d.i} \u00B7 ${d.l.replace('大年', '')}</div>`;
+      const dtbText = `Day${d.i} \u00B7 ${d.l.replace('大年', '')}`;
+      html += `<div class="dtb ${i === this.dayIndex ? 'on' : ''}" data-text="${dtbText}" onclick="App.selectDay(${i})">${dtbText}</div>`;
     });
     html += `</div>`;
 
+    html += `<div id="dayContent">` + this.renderDayContent() + `</div>`;
+    return html;
+  },
+
+  /** Render the content for the currently selected day */
+  renderDayContent() {
+    const today = this.todayDate();
     const day = tripData.days[this.dayIndex];
     const isToday = day.d === today;
     const nowH = isToday ? this.nowHours() : -1;
 
-    html += `<div style="margin-bottom:14px">` +
+    let html = `<div style="margin-bottom:14px">` +
       `<div style="font-size:17px;font-weight:700;color:var(--ink)">${day.th}</div>` +
       `<div style="font-size:12px;color:var(--tx2);margin-top:3px">${day.d} ${day.w} \u00B7 ${day.l}\u3000\uD83C\uDF21 ${day.wx}</div>` +
       `<div style="font-size:12px;color:var(--gold);margin-top:2px">\uD83D\uDC54 ${day.ft}</div></div>`;
@@ -452,17 +460,32 @@ const App = {
     return html;
   },
 
-  /** 切换日期选项卡 */
+  /** 切换日期选项卡 - targeted DOM update to avoid full re-render jitter */
   selectDay(index) {
     this.dayIndex = index;
-    this.render();
-    setTimeout(() => {
-      const tabs = document.getElementById('dTabs');
-      if (tabs) {
-        const active = tabs.querySelector('.dtb.on');
-        if (active) active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-      }
-    }, 50);
+    const tabs = document.getElementById('dTabs');
+    const dayContent = document.getElementById('dayContent');
+    if (tabs && dayContent) {
+      // Update tab active states without re-rendering the whole page
+      tabs.querySelectorAll('.dtb').forEach((el, i) => {
+        el.classList.toggle('on', i === index);
+      });
+      // Only replace the day content section
+      dayContent.innerHTML = this.renderDayContent();
+      // Scroll active tab into view
+      const active = tabs.querySelector('.dtb.on');
+      if (active) active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    } else {
+      // Fallback: full re-render if DOM elements not found
+      this.render();
+      setTimeout(() => {
+        const t = document.getElementById('dTabs');
+        if (t) {
+          const a = t.querySelector('.dtb.on');
+          if (a) a.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+      }, 50);
+    }
   },
 
   // ==============================
@@ -816,6 +839,9 @@ setInterval(() => { if (App.tab === 'today') App.render(); }, 60000);
     return localStorage.getItem(THEME_KEY) || 'auto';
   };
 })();
+
+// 以下导出仅用于单元测试，不影响浏览器运行
+export { Storage, App };
 
 // ---- 离线状态检测 ----
 (function() {

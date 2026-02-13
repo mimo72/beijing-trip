@@ -102,7 +102,7 @@ html, body {
   margin: 0 auto;
 }
 
-/* ---- Header 顶栏 (Glassmorphism) ---- */
+/* ---- Header 顶栏 (Animated Gradient + Glassmorphism) ---- */
 .hd {
   flex-shrink: 0;
   z-index: 10;
@@ -112,6 +112,26 @@ html, body {
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid var(--bdr);
   transition: background-color .3s, border-color .3s;
+  position: relative;
+  overflow: hidden;
+}
+/* Animated shimmer accent line at bottom of header */
+.hd::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, var(--red) 25%, var(--gold) 50%, var(--red) 75%, transparent 100%);
+  background-size: 200% 100%;
+  animation: headerShimmer 4s ease-in-out infinite;
+  opacity: .7;
+}
+
+@keyframes headerShimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 .hd-in {
@@ -124,9 +144,24 @@ html, body {
 .hd-t {
   font-size: 16px;
   font-weight: 700;
-  color: var(--ink);
+  background: linear-gradient(135deg, var(--red) 0%, #E53935 40%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   letter-spacing: .5px;
-  transition: color .3s;
+}
+/* Dark mode: brighter gradient for header text */
+:root[data-theme="dark"] .hd-t {
+  background: linear-gradient(135deg, #EF5350 0%, #FF8A80 40%, #FFD54F 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .hd-t {
+    background: linear-gradient(135deg, #EF5350 0%, #FF8A80 40%, #FFD54F 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
 }
 
 /* ---- Content 主内容区 ---- */
@@ -170,9 +205,25 @@ html, body {
 .ti:active { transform: scale(.92); }
 
 .ti .ic { font-size: 21px; margin-bottom: 2px; }
-.ti .lb { font-size: 10px; font-weight: 500; letter-spacing: .03em; }
+.ti .lb {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .03em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+/* Reserve bold width to prevent jitter on tab switch */
+.ti .lb::after {
+  content: attr(data-text);
+  font-weight: 700;
+  visibility: hidden;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
 
-/* 选中态 */
+/* 选中态 - with glow dot */
 .ti.on { color: var(--red); }
 .ti.on .lb { font-weight: 700; }
 .ti.on::after {
@@ -181,10 +232,34 @@ html, body {
   top: 2px;
   left: 50%;
   transform: translateX(-50%);
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: var(--red);
+  box-shadow: 0 0 6px 2px var(--red-glow);
+  animation: dotGlow 2s ease-in-out infinite;
+}
+@keyframes dotGlow {
+  0%, 100% { box-shadow: 0 0 6px 2px var(--red-glow); }
+  50%      { box-shadow: 0 0 10px 4px var(--red-glow); }
+}
+
+/* Ripple effect on tab items */
+.ti::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background: radial-gradient(circle, var(--red-glow) 0%, transparent 70%);
+  opacity: 0;
+  transform: scale(0);
+  transition: opacity .4s, transform .4s;
+  pointer-events: none;
+}
+.ti:active::before {
+  opacity: 1;
+  transform: scale(1.5);
+  transition: opacity 0s, transform 0s;
 }
 
 /* ---- Day Tabs 日期选项卡横滑 ---- */
@@ -210,15 +285,27 @@ html, body {
   cursor: pointer;
   transition: all .25s var(--ease-smooth);
   white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+/* Reserve bold width to prevent jitter on day tab switch */
+.dtb::after {
+  content: attr(data-text);
+  font-weight: 700;
+  visibility: hidden;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
 }
 .dtb:active { transform: scale(.95); }
 
 .dtb.on {
-  background: var(--red);
+  background: linear-gradient(135deg, var(--red) 0%, #E53935 60%, #EF5350 100%);
   color: #fff;
   border-color: var(--red);
   font-weight: 700;
-  box-shadow: 0 2px 12px rgba(198, 40, 40, .3);
+  box-shadow: 0 2px 12px rgba(198, 40, 40, .35), 0 0 0 1px rgba(198,40,40,.1);
 }
 
 /* ---- Card 通用卡片 (Multi-layer Shadow) ---- */
@@ -429,40 +516,42 @@ html, body {
   50%      { box-shadow: 0 0 0 8px rgba(46, 125, 50, .06); transform: scale(1.15); }
 }
 
-/* ---- Stagger Animation for Timeline Items ---- */
+/* ---- Stagger Animation for Timeline Items (Enhanced with rotation) ---- */
 .tl-stagger {
   opacity: 0;
-  transform: translateY(12px);
-  animation: staggerIn .4s var(--ease-smooth) forwards;
+  transform: translateY(20px) rotate(-0.5deg);
+  animation: staggerIn .5s var(--ease-spring) forwards;
 }
-.tl-stagger:nth-child(1) { animation-delay: 0ms; }
-.tl-stagger:nth-child(2) { animation-delay: 50ms; }
-.tl-stagger:nth-child(3) { animation-delay: 100ms; }
-.tl-stagger:nth-child(4) { animation-delay: 150ms; }
-.tl-stagger:nth-child(5) { animation-delay: 200ms; }
-.tl-stagger:nth-child(6) { animation-delay: 250ms; }
-.tl-stagger:nth-child(7) { animation-delay: 300ms; }
-.tl-stagger:nth-child(8) { animation-delay: 350ms; }
-.tl-stagger:nth-child(9) { animation-delay: 400ms; }
-.tl-stagger:nth-child(10) { animation-delay: 450ms; }
-.tl-stagger:nth-child(11) { animation-delay: 500ms; }
-.tl-stagger:nth-child(12) { animation-delay: 550ms; }
+.tl-stagger:nth-child(1)  { animation-delay: 0ms; }
+.tl-stagger:nth-child(2)  { animation-delay: 60ms; }
+.tl-stagger:nth-child(3)  { animation-delay: 120ms; }
+.tl-stagger:nth-child(4)  { animation-delay: 180ms; }
+.tl-stagger:nth-child(5)  { animation-delay: 240ms; }
+.tl-stagger:nth-child(6)  { animation-delay: 300ms; }
+.tl-stagger:nth-child(7)  { animation-delay: 360ms; }
+.tl-stagger:nth-child(8)  { animation-delay: 420ms; }
+.tl-stagger:nth-child(9)  { animation-delay: 480ms; }
+.tl-stagger:nth-child(10) { animation-delay: 540ms; }
+.tl-stagger:nth-child(11) { animation-delay: 600ms; }
+.tl-stagger:nth-child(12) { animation-delay: 660ms; }
 
 @keyframes staggerIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
+  0%   { opacity: 0; transform: translateY(20px) rotate(-0.5deg); }
+  60%  { transform: translateY(-2px) rotate(0deg); }
+  100% { opacity: 1; transform: translateY(0) rotate(0deg); }
 }
 
 /* Past items after stagger should settle to their dim state */
 .tl-stagger.past {
-  animation: staggerInPast .4s var(--ease-smooth) forwards;
+  animation: staggerInPast .5s var(--ease-spring) forwards;
 }
 @keyframes staggerInPast {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: .4; transform: translateY(0); }
+  0%   { opacity: 0; transform: translateY(20px) rotate(-0.5deg); }
+  60%  { transform: translateY(-2px) rotate(0deg); }
+  100% { opacity: .4; transform: translateY(0) rotate(0deg); }
 }
 
-/* ---- Countdown 倒计时卡片 (Upgraded) ---- */
+/* ---- Countdown 倒计时卡片 (Upgraded with animated background) ---- */
 .cnt {
   text-align: center;
   padding: 32px 20px 28px;
@@ -474,7 +563,7 @@ html, body {
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(198, 40, 40, .3), 0 8px 40px rgba(198, 40, 40, .15);
 }
-/* Decorative shimmer overlay */
+/* Decorative shimmer overlay + animated floating orb */
 .cnt::before {
   content: '';
   position: absolute;
@@ -484,6 +573,23 @@ html, body {
   height: 200%;
   background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.12) 0%, transparent 60%);
   pointer-events: none;
+}
+/* Floating decorative orb for depth */
+.cnt::after {
+  content: '';
+  position: absolute;
+  bottom: -30px;
+  right: -30px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,.1) 0%, transparent 70%);
+  animation: floatOrb 6s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes floatOrb {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(-15px, -10px) scale(1.1); }
 }
 
 .cnt .n {
@@ -621,7 +727,7 @@ html, body {
   content: '';
   width: 3px;
   height: 14px;
-  background: var(--red);
+  background: linear-gradient(to bottom, var(--red), var(--gold));
   border-radius: 2px;
 }
 
@@ -661,24 +767,42 @@ html, body {
 .bi input { flex: 1; -webkit-appearance: none; }
 .bi button {
   padding: 8px 14px;
-  background: var(--red);
+  background: linear-gradient(135deg, var(--red), #E53935);
   color: #fff;
   border: none;
   border-radius: 8px;
   font-weight: 700;
   cursor: pointer;
-  transition: transform .15s var(--ease-spring);
+  transition: transform .15s var(--ease-spring), box-shadow .2s;
+  box-shadow: 0 2px 8px rgba(198,40,40,.25);
 }
-.bi button:active { transform: scale(.92); }
+.bi button:active { transform: scale(.92); box-shadow: 0 1px 4px rgba(198,40,40,.2); }
 
-/* ---- Flight Card 航班卡片 ---- */
+/* ---- Flight Card 航班卡片 (Enhanced with shimmer) ---- */
 .fc {
-  background: linear-gradient(135deg, #1A1A2E, #2D2D4E);
+  background: linear-gradient(135deg, #1A1A2E 0%, #2D2D4E 60%, #3D3D6E 100%);
   color: #fff;
   border-radius: 14px;
   padding: 16px;
   margin-bottom: 12px;
-  box-shadow: 0 4px 16px rgba(26, 26, 46, .3);
+  box-shadow: 0 4px 16px rgba(26, 26, 46, .3), 0 8px 32px rgba(26, 26, 46, .15);
+  position: relative;
+  overflow: hidden;
+}
+.fc::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.04), transparent);
+  animation: fcShimmer 5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes fcShimmer {
+  0%, 100% { transform: translateX(-30%); }
+  50%      { transform: translateX(30%); }
 }
 .fr { display: flex; align-items: center; justify-content: space-between; margin: 10px 0; }
 .fy { text-align: center; }
@@ -773,13 +897,14 @@ html, body {
   transform: translateX(-50%) translateY(0);
 }
 
-/* ---- Tab Content Fade-in Animation ---- */
+/* ---- Tab Content Fade-in Animation (Enhanced with scale + opacity) ---- */
 .fd {
-  animation: tabFadeIn .35s var(--ease-smooth);
+  animation: tabFadeIn .4s var(--ease-spring);
 }
 @keyframes tabFadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  0%   { opacity: 0; transform: translateY(12px) scale(.98); }
+  60%  { transform: translateY(-1px) scale(1); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 /* ---- Theme Toggle Component ---- */
