@@ -31,7 +31,6 @@ const App = {
   dayIndex: 0,
   checked: Storage.get('ck', {}),
   expenses: Storage.get('ex', []),
-  diary: Storage.get('diary', {}),
   customChecklist: Storage.get('custom_ck', []),
   collapsedCats: {},
   rootEl: document.getElementById('root'),
@@ -52,7 +51,6 @@ const App = {
       today: () => this.renderToday(),
       trip:  () => this.renderTrip(),
       list:  () => this.renderList(),
-      diary: () => this.renderDiary(),
       me:    () => this.renderMe()
     };
     this.rootEl.innerHTML = '<div class="ci fd">' + (views[this.tab] || views.today)() + '</div>';
@@ -219,36 +217,6 @@ const App = {
     return '';
   },
 
-  // ---- 日记功能 ----
-
-  /** 保存日记 */
-  saveDiary(dateKey) {
-    const textarea = document.getElementById('diary-' + dateKey);
-    if (!textarea) return;
-    const text = textarea.value.trim();
-    if (text) {
-      this.diary[dateKey] = text;
-    } else {
-      delete this.diary[dateKey];
-    }
-    Storage.set('diary', this.diary);
-    this.toast(text ? '日记已保存' : '日记已清除');
-  },
-
-  /** 删除日记 */
-  deleteDiary(dateKey) {
-    delete this.diary[dateKey];
-    Storage.set('diary', this.diary);
-    this.render();
-    this.toast('日记已删除');
-  },
-
-  /** 切换日记卡片展开/收起 */
-  toggleDiaryCard(dateKey) {
-    const card = document.getElementById('dc-' + dateKey);
-    if (card) card.classList.toggle('open');
-  },
-
   // ---- 清单自定义项目 ----
 
   /** 添加自定义清单项 */
@@ -291,7 +259,10 @@ const App = {
 
   /** 大众点评搜索 */
   searchDianping(query) {
-    window.open('https://m.dianping.com/search/keyword/2/0_' + encodeURIComponent(query), '_blank');
+    const appUrl = 'dianping://searchshoplist?keyword=' + encodeURIComponent(query) + '&cityid=2';
+    const webUrl = 'https://m.dianping.com/search/keyword/2/0_' + encodeURIComponent(query);
+    window.location.href = appUrl;
+    setTimeout(() => { if (!document.hidden) window.location.href = webUrl; }, 1500);
   },
 
   /** 打开外部链接 */
@@ -521,7 +492,7 @@ const App = {
         const btnClass = a.p === 'nav' ? 'an' : a.p === 'dp' ? 'af' : (a.p === 'url' || a.p === 'wx') ? 'ak' : 'ac';
         const icon = a.p === 'nav' ? '\uD83E\uDDED' : a.p === 'dp' ? '\uD83D\uDD0D' : a.p === 'url' ? '\uD83D\uDD17' : a.p === 'wx' ? '\uD83D\uDCAC' : '\uD83D\uDCCB';
         if (a.p === 'dp') {
-          actionsHtml += `<a class="ab ${btnClass}" href="https://m.dianping.com/search/keyword/2/0_${encodeURIComponent(a.q)}">${icon} ${a.l}</a>`;
+          actionsHtml += `<button class="ab ${btnClass}" onclick="App.searchDianping('${a.q.replace(/'/g, "\\'")}')">${icon} ${a.l}</button>`;
         } else if (a.p === 'url') {
           actionsHtml += `<a class="ab ${btnClass}" href="${a.url}">${icon} ${a.l}</a>`;
         } else {
@@ -606,40 +577,6 @@ const App = {
     return `<div class="ck ${isDone ? 'dn' : ''}" onclick="App.toggle('${item.id}')"><div class="cx"><svg class="cx-svg" viewBox="0 0 16 16"><path d="M3 8l4 4 6-7"/></svg></div><div style="flex:1">` +
       `<div class="ct2">${item.tx}${isUrgent ? '<span class="ug">紧急</span>' : ''}${item.dl ? `<span class="dl">${item.dl}前</span>` : ''}</div>` +
       `${item.nt ? `<div class="cm">${item.nt}</div>` : ''}</div></div>`;
-  },
-
-  // ==============================
-  // DIARY 日记视图
-  // ==============================
-
-  renderDiary() {
-    let html = `<div style="margin-bottom:14px">` +
-      `<div style="font-size:19px;font-weight:700;color:var(--ink)">旅行日记</div>` +
-      `<div style="font-size:12px;color:var(--tx2);margin-top:3px">记录旅途中的点滴</div></div>`;
-
-    tripData.days.forEach(day => {
-      const dateKey = day.d;
-      const hasEntry = !!this.diary[dateKey];
-      const dateLabel = parseInt(day.d.slice(5, 7)) + '月' + parseInt(day.d.slice(8, 10)) + '日';
-      const preview = hasEntry ? this.diary[dateKey] : '';
-
-      html += `<div class="diary-card" id="dc-${dateKey}">` +
-        `<div class="diary-card-hd" onclick="App.toggleDiaryCard('${dateKey}')">` +
-        `<div><div class="diary-day-tag"><span class="diary-day-num">Day${day.i}</span>` +
-        `<span class="diary-day-date">${dateLabel} ${day.w}</span></div>` +
-        `<div class="diary-day-theme">${day.th}</div>` +
-        `${!hasEntry ? '<div class="diary-empty">点击展开写日记...</div>' : `<div class="diary-preview">${preview}</div>`}` +
-        `</div>` +
-        `<span class="diary-toggle">\u25BC</span></div>` +
-        `<div class="diary-body">` +
-        `<textarea class="diary-text" id="diary-${dateKey}" placeholder="写下今天的感想...">${this.diary[dateKey] || ''}</textarea>` +
-        `<div class="diary-actions">` +
-        `${hasEntry ? `<button class="diary-btn-del" onclick="App.deleteDiary('${dateKey}')">删除</button>` : ''}` +
-        `<button class="diary-btn-save" onclick="App.saveDiary('${dateKey}')">保存</button>` +
-        `</div></div></div>`;
-    });
-
-    return html;
   },
 
   // ==============================

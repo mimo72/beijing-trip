@@ -298,7 +298,7 @@ const A={
   window.location.href=app;
   setTimeout(()=>{if(!document.hidden)window.location.href=web},1500);
  },
- dp(q){window.open('https://m.dianping.com/search/keyword/2/0_'+encodeURIComponent(q),'_blank')},
+ dp(q){const app='dianping://searchshoplist?keyword='+encodeURIComponent(q)+'&cityid=2';const web='https://m.dianping.com/search/keyword/2/0_'+encodeURIComponent(q);window.location.href=app;setTimeout(()=>{if(!document.hidden)window.location.href=web},1500)},
  url(u){window.open(u,'_blank')},
  wx(m){this.cp(m);this.toast('已复制「'+m+'」打开微信搜索')},
  act(a){if(a.p==='nav')this.nav(a.n,a.la,a.lo);else if(a.p==='dp')this.dp(a.q);else if(a.p==='url')this.url(a.url);else if(a.p==='cp')this.cp(a.tx);else if(a.p==='wx')this.wx(a.mp)},
@@ -369,7 +369,7 @@ const A={
    it.ac.forEach(a=>{
     const c=a.p==='nav'?'an':a.p==='dp'?'af':a.p==='url'||a.p==='wx'?'ak':'ac';
     const ic=a.p==='nav'?'🧭':a.p==='dp'?'🔍':a.p==='url'?'🔗':a.p==='wx'?'💬':'📋';
-    if(a.p==='dp'){acH+=`<a class="ab ${c}" href="https://m.dianping.com/search/keyword/2/0_${encodeURIComponent(a.q)}">${ic} ${a.l}</a>`}
+    if(a.p==='dp'){acH+=`<button class="ab ${c}" onclick="A.dp('${a.q.replace(/'/g,"\\'")}')">${ic} ${a.l}</button>`}
     else if(a.p==='url'){acH+=`<a class="ab ${c}" href="${a.url}">${ic} ${a.l}</a>`}
     else{acH+=`<button class="ab ${c}" onclick="A.act(JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(a))}')))">${ic} ${a.l}</button>`}
    });

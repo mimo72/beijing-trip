@@ -7,7 +7,7 @@
   display: flex;
   overflow-x: auto;
   gap: 10px;
-  padding: 4px 0 8px;
+  padding: 4px 0 16px;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
 }
@@ -231,119 +231,6 @@
   padding: 10px 0 4px;
   border-bottom: 1px solid var(--bdr);
   margin: 6px 0;
-}
-
-/* ---- Diary 日记功能 ---- */
-.diary-card {
-  background: var(--card);
-  border-radius: 12px;
-  padding: 14px;
-  margin-bottom: 10px;
-  box-shadow: var(--shd);
-  border: 1px solid rgba(0,0,0,.03);
-}
-.diary-card-hd {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-}
-.diary-day-tag {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.diary-day-num {
-  background: var(--red);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 10px;
-}
-.diary-day-date {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-}
-.diary-day-theme {
-  font-size: 11px;
-  color: var(--tx2);
-  margin-top: 2px;
-}
-.diary-toggle {
-  font-size: 12px;
-  color: var(--tx2);
-  transition: transform .25s;
-}
-.diary-card.open .diary-toggle {
-  transform: rotate(180deg);
-}
-.diary-body {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height .35s ease;
-}
-.diary-card.open .diary-body {
-  max-height: 600px;
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px dashed var(--bdr);
-}
-.diary-text {
-  width: 100%;
-  min-height: 100px;
-  border: 1.5px solid var(--bdr);
-  border-radius: 8px;
-  padding: 10px;
-  font-size: 13px;
-  font-family: inherit;
-  background: var(--bg);
-  color: var(--tx);
-  resize: vertical;
-  line-height: 1.6;
-}
-.diary-text:focus {
-  outline: none;
-  border-color: var(--red);
-}
-.diary-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-  justify-content: flex-end;
-}
-.diary-actions button {
-  padding: 6px 14px;
-  border: none;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.diary-btn-save {
-  background: var(--red);
-  color: #fff;
-}
-.diary-btn-del {
-  background: #ECEFF1;
-  color: #666;
-}
-.diary-preview {
-  font-size: 12px;
-  color: var(--tx2);
-  margin-top: 6px;
-  line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.diary-empty {
-  font-size: 12px;
-  color: var(--tx2);
-  font-style: italic;
-  margin-top: 6px;
 }
 
 /* ---- Checklist Enhancements 清单增强 ---- */
